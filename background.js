@@ -16,6 +16,8 @@ var startPing = function () {
 	if (navigator.onLine) {
 		xhr.open("GET", "http://www.google.com/robots.txt");
 		xhr.send();
+	} else {
+		setTimeout(startPing, interval);
 	}
 };
 
