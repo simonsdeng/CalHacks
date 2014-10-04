@@ -1,24 +1,38 @@
 var interval = 3000;
 var pingUrl = "http://www.google.com/robots.txt";
 
-var login = false;
+var loginTab = null;
 var xhr = new XMLHttpRequest();
+var data = [];
 
 xhr.onload = function () {
 	if (this.response.indexOf("User-agent:")) {
-		login = true;
+		loginTab = true;
 		chrome.tabs.create({url: pingUrl}, function (tab) {
-			chrome.tabs.executeScript(tab.id, {file: "handleLogin.js"});
+			loginTab = tab;
+			chrome.tabs.executeScript(loginTab.id, {file: "handleLogin.js"});
 		});
 	}
 };
 
 chrome.runtime.onMessage.addListener(function (message) {
-	console.log(message)
+	if (navigate in form) {
+		chrome.tabs.executeScript(loginTab.id, {file: "handleLogin.js"});
+	}
+
+	data.push(message);
 });
 
+var store = function (key, object) {
+	var value = JSON.stringify(object);
+
+	chrome.storage.sync.set({key: value}, function() {
+		console.log('Settings saved');
+        });
+};
+
 var startPing = function () {
-	if (navigator.onLine && !login) {
+	if (navigator.onLine && !loginTab) {
 		xhr.open("GET", pingUrl);
 		xhr.send();
 	} else {
