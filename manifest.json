@@ -3,5 +3,9 @@
 
 	"name": "WiFi Auto-Login",
 	"description": "This extension bypasses WiFi login pages.",
-	"version": "1.0"
+	"version": "1.0",
+
+	"background": {
+		"scripts": ["background.js"]
+	}
 }
