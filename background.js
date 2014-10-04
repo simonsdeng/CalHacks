@@ -1,7 +1,7 @@
 var interval = 3000;
 
 var handleLoginPage = function (response) {
-	console.log("login");
+	
 };
 
 var xhr = new XMLHttpRequest();
