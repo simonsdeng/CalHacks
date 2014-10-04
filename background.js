@@ -8,10 +8,14 @@ xhr.onload = function () {
 	if (this.response.indexOf("User-agent:")) {
 		login = true;
 		chrome.tabs.create({url: pingUrl}, function (tab) {
-			chrome.tabs.executeScript(tab.id, {code: "alert(\"hi\")"});
+			chrome.tabs.executeScript(tab.id, {file: "handleLogin.js"});
 		});
 	}
 };
+
+chrome.runtime.onMessage.addListener(function (message) {
+	console.log(message)
+});
 
 var startPing = function () {
 	if (navigator.onLine && !login) {
