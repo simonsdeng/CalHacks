@@ -9,8 +9,6 @@ var xhr = new XMLHttpRequest();
 xhr.onload = function () {
 	if (this.response.indexOf("User-agent:")) {
 		handleLoginPage(this.response);
-	} else {
-		console.log("ping");
 	}
 };
 
