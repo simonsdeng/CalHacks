@@ -16,7 +16,7 @@ xhr.onload = function () {
 };
 
 chrome.runtime.onMessage.addListener(function (message) {
-	if (navigate in message) {
+	if ("navigate" in message) {
 		chrome.tabs.executeScript(loginTab.id, {file: "handleLogin.js"});
 	}
 
