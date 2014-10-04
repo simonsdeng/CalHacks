@@ -1,4 +1,5 @@
 var interval = 3000;
+var pingUrl = "http://www.google.com/robots.txt";
 
 var handleLoginPage = function (response) {
 	
@@ -14,7 +15,7 @@ xhr.onload = function () {
 
 var startPing = function () {
 	if (navigator.onLine) {
-		xhr.open("GET", "http://www.google.com/robots.txt");
+		xhr.open("GET", pingUrl);
 		xhr.send();
 	} else {
 		setTimeout(startPing, interval);
