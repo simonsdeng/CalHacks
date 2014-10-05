@@ -2,6 +2,7 @@ var interval = 3000;
 var pingUrl = "http://www.google.com/robots.txt";
 
 var data = [];
+var current = {};
 var loginTabId = 0;
 
 var xhr = new XMLHttpRequest();
@@ -12,11 +13,13 @@ xhr.onload = function () {
 
 	if (!!loginTabId === connected) {
 		if (connected) {
-			// TODO store data
+			data.push(current);
+			current = {};
 			chrome.tabs.remove(loginTabId);
 		} else {
 			chrome.tabs.create({url: pingUrl}, function (tab) {
 				loginTabId = tab.id;
+				current.url = tab.url;
 			});
 		}
 	}
@@ -25,8 +28,11 @@ xhr.onload = function () {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (tabId === loginTabId && changeInfo.url) {
 		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"}, function () {
+			// TODO send data to handleLogin.js
 			chrome.tabs.sendMessage(tabId, {});
-			data.push({url: changeInfo.url});
+			current.url = changeInfo.url;
+			data.push(current);
+			current = {url: changeInfo.url};
 		});
 	}
 });
@@ -36,7 +42,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 });
 
 chrome.runtime.onMessage.addListener(function (message) {
-	data.push(message);
+	current.data = message;
 });
 
 var store = function (key, object) {

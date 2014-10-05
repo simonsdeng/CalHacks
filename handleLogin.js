@@ -1,5 +1,5 @@
 var autologin = function (message) {
-
+	// TODO autologin
 };
 
 var recordData = function () {
