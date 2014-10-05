@@ -10,8 +10,8 @@ xhr.onload = function () {
 
 	if (!!loginTabId === connected) {
 		if (connected) {
+			// TODO store data
 			chrome.tabs.remove(loginTabId);
-			loginTabId = 0;
 		} else {
 			chrome.tabs.create({url: pingUrl}, function (tab) {
 				loginTabId = tab.id;
@@ -27,6 +27,10 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 			data.push({url: changeInfo.url});
 		});
 	}
+});
+
+chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+	if (tabId === loginTabId) loginTabId = 0;
 });
 
 chrome.runtime.onMessage.addListener(function (message) {

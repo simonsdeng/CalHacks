@@ -30,8 +30,6 @@ var recordData = function () {
 };
 
 chrome.runtime.onMessage.addListener(function (message) {
-	console.log(message);
-
 	if (false && !message.empty /*or something like this*/) {
 		autologin(message); // or something
 	} else {
