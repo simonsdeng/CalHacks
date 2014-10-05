@@ -1,6 +1,5 @@
 var autologin = function (data) {
-	console.log(data);
-	data = JSON.parse(data[location]);
+	data = JSON.parse(data[location.toString().split("?")[0]]);
 
 	var form;
 	var prop;
@@ -40,7 +39,7 @@ var recordData = function () {
 };
 
 chrome.runtime.onMessage.addListener(function (message) {
-	if (!Object.keys(message).length) {
+	if (Object.keys(message).length) {
 		autologin(message);
 	} else {
 		recordData();

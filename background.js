@@ -22,7 +22,7 @@ xhr.onload = function () {
 		} else {
 			chrome.tabs.create({url: pingUrl}, function (tab) {
 				loginTabId = tab.id;
-				current.url = tab.url;
+				current.url = tab.url.split("?")[0];
 			});
 		}
 	}
@@ -30,16 +30,16 @@ xhr.onload = function () {
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (tabId === loginTabId && changeInfo.url) {
-		console.log(changeInfo);
 		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"}, function () {
-			chrome.storage.sync.get(changeInfo.url, function (items) {
+			var url = changeInfo.url.split("?")[0];
+			chrome.storage.sync.get(url, function (items) {
 				chrome.tabs.sendMessage(tabId, items);
 
 				if (!Object.keys(items).length) {
 					if (!current.data) current.data = {};
-					current.data.url = changeInfo.url;
+					current.data.url = url;
 					data.push(current);
-					current = {url: changeInfo.url};
+					current = {url: url};
 				}
 			});
 		});
