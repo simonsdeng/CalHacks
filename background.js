@@ -1,9 +1,11 @@
 var interval = 3000;
 var pingUrl = "http://www.google.com/robots.txt";
 
-var loginTabId = 0;
-var xhr = new XMLHttpRequest();
 var data = [];
+var loginTabId = 0;
+
+var xhr = new XMLHttpRequest();
+xhr.timeout = interval * 2;
 
 xhr.onload = function () {
 	var connected = !this.response.indexOf("User-agent:");
