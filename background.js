@@ -1,25 +1,33 @@
 var interval = 3000;
 var pingUrl = "http://www.google.com/robots.txt";
 
-var loginTab = null;
+var loginTabId = 0;
 var xhr = new XMLHttpRequest();
 var data = [];
 
 xhr.onload = function () {
-	if (this.response.indexOf("User-agent:")) {
-		loginTab = true;
-		chrome.tabs.create({url: pingUrl}, function (tab) {
-			loginTab = tab;
-			chrome.tabs.executeScript(loginTab.id, {file: "handleLogin.js"});
-		});
+	var connected = !this.response.indexOf("User-agent:");
+
+	if (!!loginTabId === connected) {
+		if (connected) {
+			chrome.tabs.remove(loginTabId);
+			loginTabId = 0;
+		} else {
+			chrome.tabs.create({url: pingUrl}, function (tab) {
+				loginTabId = tab.id;
+			});
+		}
 	}
 };
 
-chrome.runtime.onMessage.addListener(function (message) {
-	if ("navigate" in message) {
-		chrome.tabs.executeScript(loginTab.id, {file: "handleLogin.js"});
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+	if (tabId === loginTabId && changeInfo.url) {
+		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"});
+		data.push({url: changeInfo.url});
 	}
+});
 
+chrome.runtime.onMessage.addListener(function (message) {
 	data.push(message);
 });
 
@@ -28,11 +36,11 @@ var store = function (key, object) {
 
 	chrome.storage.sync.set({key: value}, function() {
 		console.log('Settings saved');
-        });
+	});
 };
 
 var startPing = function () {
-	if (navigator.onLine && !loginTab) {
+	if (navigator.onLine) {
 		xhr.open("GET", pingUrl);
 		xhr.send();
 	} else {
