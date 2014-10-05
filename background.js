@@ -22,9 +22,10 @@ xhr.onload = function () {
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (tabId === loginTabId && changeInfo.url) {
-		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"});
-		chrome.tabs.sendMessage(tabId, {});
-		data.push({url: changeInfo.url});
+		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"}, function () {
+			chrome.tabs.sendMessage(tabId, {});
+			data.push({url: changeInfo.url});
+		});
 	}
 });
 
