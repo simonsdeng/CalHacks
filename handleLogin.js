@@ -1,5 +1,15 @@
-var autologin = function (message) {
-	// TODO autologin
+var autologin = function (data) {
+	console.log(data);
+	data = JSON.parse(data[location]);
+
+	var form;
+	var prop;
+	if ("form" in data) {
+		form = document.forms[data.form];
+		for (prop in data.data) form.elements[prop].value = data.data[prop];
+		// form.submit();
+		document.createElement('form').submit.call(form);  // workaround for inputs with name "submit"
+	}
 };
 
 var recordData = function () {
@@ -30,8 +40,8 @@ var recordData = function () {
 };
 
 chrome.runtime.onMessage.addListener(function (message) {
-	if (false && !message.empty /*or something like this*/) {
-		autologin(message); // or something
+	if (!Object.keys(message).length) {
+		autologin(message);
 	} else {
 		recordData();
 	}

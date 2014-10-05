@@ -30,6 +30,7 @@ xhr.onload = function () {
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (tabId === loginTabId && changeInfo.url) {
+		console.log(changeInfo);
 		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"}, function () {
 			chrome.storage.sync.get(changeInfo.url, function (items) {
 				chrome.tabs.sendMessage(tabId, items);
