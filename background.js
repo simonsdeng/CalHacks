@@ -32,6 +32,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (tabId === loginTabId && changeInfo.url) {
 		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"}, function () {
 			var url = changeInfo.url.split("?")[0];
+
 			chrome.storage.sync.get(url, function (items) {
 				chrome.tabs.sendMessage(tabId, items);
 

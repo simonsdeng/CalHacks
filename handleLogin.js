@@ -2,12 +2,18 @@ var autologin = function (data) {
 	data = JSON.parse(data[location.toString().split("?")[0]]);
 
 	var form;
+	var button;
 	var prop;
 	if ("form" in data) {
 		form = document.forms[data.form];
 		for (prop in data.data) form.elements[prop].value = data.data[prop];
-		// form.submit();
-		document.createElement('form').submit.call(form);  // workaround for inputs with name "submit"
+		button = form.querySelector("input[type=submit]");
+		if (button) {
+			button.click();
+		} else {
+			// form.submit();
+			document.createElement('form').submit.call(form);  // workaround for inputs with name "submit"
+		}
 	}
 };
 
