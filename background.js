@@ -13,9 +13,12 @@ xhr.onload = function () {
 
 	if (!!loginTabId === connected) {
 		if (connected) {
+			chrome.tabs.remove(loginTabId);
+
 			data.push(current);
 			current = {};
-			chrome.tabs.remove(loginTabId);
+			store(data);
+			data = [];
 		} else {
 			chrome.tabs.create({url: pingUrl}, function (tab) {
 				loginTabId = tab.id;
@@ -28,11 +31,16 @@ xhr.onload = function () {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 	if (tabId === loginTabId && changeInfo.url) {
 		chrome.tabs.executeScript(tabId, {file: "handleLogin.js"}, function () {
-			// TODO send data to handleLogin.js
-			chrome.tabs.sendMessage(tabId, {});
-			current.url = changeInfo.url;
-			data.push(current);
-			current = {url: changeInfo.url};
+			chrome.storage.sync.get(changeInfo.url, function (items) {
+				chrome.tabs.sendMessage(tabId, items);
+
+				if (!Object.keys(items).length) {
+					if (!current.data) current.data = {};
+					current.data.url = changeInfo.url;
+					data.push(current);
+					current = {url: changeInfo.url};
+				}
+			});
 		});
 	}
 });
@@ -45,12 +53,17 @@ chrome.runtime.onMessage.addListener(function (message) {
 	current.data = message;
 });
 
-var store = function (key, object) {
-	var value = JSON.stringify(object);
+var store = function (data) {
+	var i;
+	var obj;
+	for (i = 0; i < data.length; i++) {
+		var key = data[i].url;
+		var value = JSON.stringify(data[i].data);
 
-	chrome.storage.sync.set({key: value}, function() {
-		console.log('Settings saved');
-	});
+		var obj = {};
+		obj[key] = value;
+		chrome.storage.sync.set(obj);
+	}
 };
 
 var startPing = function () {

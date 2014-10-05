@@ -5,6 +5,7 @@
 	"description": "This extension bypasses WiFi login pages.",
 	"version": "1.0",
 
-	"permissions": ["tabs", "background", "http://*/", "https://*/"], 
+	"permissions": ["tabs", "storage", "http://*/", "https://*/"],
+	"optional_permissions": ["background"],
 	"background": {"scripts": ["background.js"]}
 }
