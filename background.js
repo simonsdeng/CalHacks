@@ -20,9 +20,9 @@ xhr.onload = function () {
 			store(data);
 			data = [];
 		} else {
-			chrome.tabs.create({url: pingUrl}, function (tab) {
-				loginTabId = tab.id;
-				current.url = tab.url.split("?")[0];
+			chrome.windows.create({url: pingUrl, type: "popup"}, function (window) {
+				loginTabId = window.tabs[0].id;
+				current.url = window.tabs[0].url.split("?")[0];
 			});
 		}
 	}
